@@ -1,16 +1,12 @@
 package dto
 
-import (
-	"github.com/google/uuid"
-)
-
-type CreateProfileOutput struct {
-	ID uuid.UUID `json:"id"`
+type CreateProfileInput struct {
+	Name  string `json:"name" validate:"required"`
+	Age   int    `json:"age" validate:"required,min=18,max=120"`
+	Email string `json:"email" validate:"email"`
+	Phone string `json:"phone" validate:"e164"`
 }
 
-type CreateProfileInput struct {
-	Name  string `json:"name"`
-	Age   int    `json:"age"`
-	Email string `json:"email"`
-	Phone string `json:"phone"`
+type CreateProfileOutput struct {
+	ID string `json:"id"` // Здесь это поле, чтобы возвращать ID нового профиля
 }
