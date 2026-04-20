@@ -27,7 +27,7 @@ func Run(ctx context.Context, c config.Config) error {
 
 	uc := usecase.New(pgPool)
 
-	r := v1.InitializeRouter(c.HTTP.BasePath, uc)
+	r := v1.New(c.HTTP.BasePath, uc)
 
 	httpServer := httpserver.New(r, c.HTTP)
 

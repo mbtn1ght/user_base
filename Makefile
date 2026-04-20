@@ -1,5 +1,5 @@
-DB_MIGRATE_URL = postgres://login:pass@localhost:5433/postgres?sslmode=disable
-MIGRATE_PATH = ./migration/postgres
+DB_MIGRATE_URL = postgres://login:pass@localhost:5432/postgres?sslmode=disable
+MIGRATE_PATH = ./migration
 
 run:
 	go run ./cmd/app

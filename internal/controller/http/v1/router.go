@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func InitializeRouter(basePath string, uc *usecase.UseCase) *chi.Mux {
+func New(basePath string, uc *usecase.UseCase) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(logger.LoggingMiddleware)
 
