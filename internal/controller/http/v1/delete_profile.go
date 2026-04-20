@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 
 	"user_base/internal/domain"
+	"user_base/internal/dto"
 )
 
 func (h *Handlers) DeleteProfile(w http.ResponseWriter, r *http.Request) {
@@ -17,20 +17,20 @@ func (h *Handlers) DeleteProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profileID, err := uuid.Parse(id)
-	if err != nil {
-		http.Error(w, "invalid profile id", http.StatusBadRequest)
-		return
-	}
+	input := dto.DeleteProfileInput{ID: id}
 
-	if err := h.usecase.DeleteProfile(r.Context(), profileID); err != nil {
-		if errors.Is(err, domain.ErrNotFound) {
+	if err := h.usecase.DeleteProfile(r.Context(), input); err != nil {
+		switch {
+		case errors.Is(err, domain.ErrUUIDInvalid):
+			http.Error(w, "invalid profile id", http.StatusBadRequest)
+			return
+		case errors.Is(err, domain.ErrNotFound):
 			http.Error(w, "profile not found", http.StatusNotFound)
 			return
+		default:
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
-
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)

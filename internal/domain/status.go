@@ -10,21 +10,6 @@ const (
 	Banned
 )
 
-func NewStatus(s string) Status {
-	switch s {
-	case "pending":
-		return Pending
-	case "active":
-		return Active
-	case "inactive":
-		return Inactive
-	case "banned":
-		return Banned
-	default:
-		return Unknown
-	}
-}
-
 //nolint:exhaustive
 func (s Status) String() string {
 	switch s {

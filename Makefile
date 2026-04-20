@@ -15,3 +15,7 @@ migrate-down:
 
 drop-db:
 	docker compose exec -T pgdb psql -U login -d postgres -c "DROP DATABASE IF EXISTS postgres;"
+
+migrate-install:
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1
+

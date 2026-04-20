@@ -11,9 +11,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func (u *UseCase) UpdateProfile(ctx context.Context, profileID uuid.UUID, input dto.UpdateProfileInput) (domain.Profile, error) {
+func (u *UseCase) UpdateProfile(ctx context.Context, input dto.UpdateProfileInput) (domain.Profile, error) {
 	if input.IsEmpty() {
 		return domain.Profile{}, domain.ErrAllFieldsForUpdateEmpty
+	}
+
+	profileID, err := uuid.Parse(input.ID)
+	if err != nil {
+		return domain.Profile{}, domain.ErrUUIDInvalid
 	}
 
 	if err := u.postgres.UpdateProfile(ctx, profileID, input); err != nil {
