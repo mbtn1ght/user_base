@@ -32,6 +32,8 @@ func New(basePath string, uc *usecase.UseCase) *chi.Mux {
 func mountProfileRoutes(router chi.Router, controller *v1.Handlers) {
 	router.Post("/profile", controller.CreateProfile)
 	router.Get("/profile/{profileID}", controller.GetProfile)
+	router.Put("/profile/{profileID}", controller.UpdateProfile)
+	router.Delete("/profile/{profileID}", controller.DeleteProfile)
 }
 
 func normalizeBasePath(basePath string) string {
