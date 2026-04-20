@@ -1,10 +1,10 @@
-package v1
+package router
 
 import (
 	"path"
 	"strings"
+	"user_base/internal/controller/http/v1"
 
-	"user_base/internal/controller/http"
 	"user_base/internal/usecase"
 	"user_base/pkg/logger"
 
@@ -15,7 +15,7 @@ func New(basePath string, uc *usecase.UseCase) *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(logger.LoggingMiddleware)
 
-	controller := http.New(uc)
+	controller := v1.New(uc)
 	normalizedBasePath := normalizeBasePath(basePath)
 
 	mountProfileRoutes(r, controller)
@@ -29,8 +29,9 @@ func New(basePath string, uc *usecase.UseCase) *chi.Mux {
 	return r
 }
 
-func mountProfileRoutes(router chi.Router, controller *http.Handlers) {
+func mountProfileRoutes(router chi.Router, controller *v1.Handlers) {
 	router.Post("/profile", controller.CreateProfile)
+	router.Get("/profile/{profileID}", controller.GetProfile)
 }
 
 func normalizeBasePath(basePath string) string {

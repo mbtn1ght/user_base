@@ -1,11 +1,12 @@
 package logger
 
 import (
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func Init(c Config) {
@@ -27,6 +28,16 @@ func Init(c Config) {
 	log.Info().Msg("logger initialized")
 }
 
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (lrw *loggingResponseWriter) WriteHeader(statusCode int) {
+	lrw.status = statusCode
+	lrw.ResponseWriter.WriteHeader(statusCode)
+}
+
 type Config struct {
 	AppName       string `envconfig:"APP_NAME"    required:"true"`
 	AppVersion    string `envconfig:"APP_VERSION" required:"true"`
@@ -37,10 +48,18 @@ type Config struct {
 // --- middleware для логирования ---
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		lrw := &loggingResponseWriter{
+			ResponseWriter: w,
+			status:         http.StatusOK,
+		}
+
+		next.ServeHTTP(lrw, r)
+
 		log.Info().
 			Str("method", r.Method).
 			Str("url", r.URL.String()).
-			Msg("incoming request")
-		next.ServeHTTP(w, r)
+			Int("status", lrw.status).
+			Msg("handled request")
 	})
 }

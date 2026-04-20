@@ -4,18 +4,20 @@ import (
 	"context"
 
 	"user_base/internal/domain"
+
+	"github.com/google/uuid"
 )
 
-type PostgresRepository interface {
+type Postgres interface {
 	CreateProfile(ctx context.Context, profile domain.Profile) error
 	CreateProperty(ctx context.Context, property domain.Property) error
-	GetProfile(ctx context.Context, profileID string) (domain.Profile, error)
+	GetProfile(ctx context.Context, profileID uuid.UUID) (domain.Profile, error)
 }
 
 type UseCase struct {
-	postgres PostgresRepository
+	postgres Postgres
 }
 
-func New(postgres PostgresRepository) *UseCase {
+func New(postgres Postgres) *UseCase {
 	return &UseCase{postgres: postgres}
 }
