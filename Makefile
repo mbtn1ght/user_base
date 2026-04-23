@@ -19,3 +19,7 @@ drop-db:
 migrate-install:
 	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1
 
+.PHONY: test
+test:
+	go test -v -cover ./...
+
