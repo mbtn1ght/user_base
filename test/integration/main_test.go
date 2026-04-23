@@ -1,6 +1,6 @@
 //go:build integration
 
-package integration
+package test
 
 import (
 	"context"
@@ -12,13 +12,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/config"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/internal/app"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/pkg/httpserver"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/pkg/otel"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/pkg/postgres"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/pkg/profile_client_gen"
-	"gitlab.golang-school.ru/potok-2/lessons/lesson-22/pkg/redis"
+	"user_base/config"
+	"user_base/internal/app"
+	"user_base/pkg/httpserver"
+	"user_base/pkg/postgres"
+	"user_base/pkg/profile_client"
 )
 
 // Prepare:  make up
@@ -34,7 +32,7 @@ type Suite struct {
 	suite.Suite
 	*require.Assertions
 
-	profile *profile_client_gen.Client
+	profile *profile_client.Client
 }
 
 func (s *Suite) SetupSuite() { // В начале всех тестов
@@ -45,27 +43,24 @@ func (s *Suite) SetupSuite() { // В начале всех тестов
 	// Config
 	c := config.Config{
 		App: config.App{
-			Name:    "my-app",
-			Version: "test",
-		},
-		HTTP: httpserver.Config{
-			Port: "8080",
+			Name:    "user_base",
+			Version: "v0.1.1",
 		},
 		Postgres: postgres.Config{
-			Host:     "localhost",
-			Port:     "5432",
 			User:     "login",
 			Password: "pass",
+			Port:     "5432",
+			Host:     "localhost",
 			DBName:   "postgres",
 		},
-		Redis: redis.Config{
-			Addr: "localhost:6379",
+		HTTP: httpserver.Config{
+			Port:     "8080",
+			BasePath: "/api/v1",
 		},
 	}
 
 	// Logger and OTEL disable
 	log.Logger = zerolog.Nop()
-	otel.SilentModeInit()
 
 	// Server
 	go func() {
@@ -74,11 +69,15 @@ func (s *Suite) SetupSuite() { // В начале всех тестов
 	}()
 
 	// API client
-	var err error
-	s.profile, err = profile_client_gen.New(profile_client_gen.Config{Host: "localhost", Port: "8080"})
-	s.NoError(err)
+	s.profile = profile_client.New(profile_client.Config{Host: "localhost", Port: "8080"})
 
-	time.Sleep(time.Second)
+	for i := 0; i < 20; i++ {
+		_, err := s.profile.GetProfile(ctx, "health-check")
+		if err == nil {
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
 }
 
 func (s *Suite) TearDownSuite() {} // В конце всех тестов

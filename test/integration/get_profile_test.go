@@ -1,6 +1,6 @@
 //go:build integration
 
-package integration
+package test
 
 func (s *Suite) Test_GetProfile_Ok() {
 	id, err := s.profile.Create(ctx, "John_Get", 25, "john@gmail.com", "+73003002020")
@@ -11,8 +11,8 @@ func (s *Suite) Test_GetProfile_Ok() {
 
 	s.Equal("John_Get", p.Name)
 	s.Equal(25, p.Age)
-	s.Equal("john@gmail.com", p.Contacts.Email)
-	s.Equal("+73003002020", p.Contacts.Phone)
+	s.Equal("john@gmail.com", p.Email)
+	s.Equal("+73003002020", p.Phone)
 }
 
 func (s *Suite) Test_GetProfile_NotFound() {

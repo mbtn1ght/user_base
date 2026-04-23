@@ -1,6 +1,6 @@
 //go:build integration
 
-package integration
+package test
 
 func (s *Suite) Test_DeleteProfile() {
 	id, err := s.profile.Create(ctx, "John_Delete", 25, "john@gmail.com", "+73003002020")

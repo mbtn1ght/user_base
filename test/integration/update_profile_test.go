@@ -1,6 +1,6 @@
 //go:build integration
 
-package integration
+package test
 
 func (s *Suite) Test_UpdateProfile() {
 	id, err := s.profile.Create(ctx, "John_Update", 25, "john@gmail.com", "+73003002020")
@@ -26,6 +26,6 @@ func (s *Suite) Test_UpdateProfile() {
 
 	s.Equal(name, p.Name)
 	s.Equal(age, p.Age)
-	s.Equal(email, p.Contacts.Email)
-	s.Equal(phone, p.Contacts.Phone)
+	s.Equal(email, p.Email)
+	s.Equal(phone, p.Phone)
 }

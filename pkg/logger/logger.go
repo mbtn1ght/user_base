@@ -61,5 +61,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 			Str("url", r.URL.String()).
 			Int("status", lrw.status).
 			Msg("handled request")
+
 	})
 }

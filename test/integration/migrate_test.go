@@ -1,17 +1,18 @@
 //go:build integration
 
-package integration
+package test
 
 import (
 	"errors"
 
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func (s *Suite) ResetMigrations() {
 	const (
-		filesPath = "file://../../migration/postgres"
+		filesPath = "file://../../migrations"
 		dbURL     = "postgres://login:pass@localhost:5432/postgres?sslmode=disable"
 	)
 

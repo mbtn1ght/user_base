@@ -23,3 +23,5 @@ migrate-install:
 test:
 	go test -v -cover ./...
 
+integration-test:
+	go test -count=1 -v -tags=integration ./test/integration
